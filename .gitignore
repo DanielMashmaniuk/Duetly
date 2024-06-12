@@ -1,0 +1,30 @@
+functions/node_modules/
+*.local
+# Ignore temporary files and directories
+*.tmp
+*.temp
+*.log
+*.lock
+
+# Ignore specific system directories
+AppData/
+Application Data/
+Cookies/
+Documents/My Music/
+Documents/My Pictures/
+Documents/My Videos/
+Local Settings/
+My Documents/
+NetHood/
+PrintHood/
+Recent/
+SendTo/
+Start Menu/
+Templates/
+
+# Ignore Android cache and metrics
+.android/cache/
+.android/metrics/
+
+# Ignore all directories under Temporary Internet Files
+*/Temporary Internet Files/

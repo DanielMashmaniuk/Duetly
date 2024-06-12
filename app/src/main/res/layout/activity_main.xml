@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/mainBGColor"
+    tools:context=".MainActivity">
+
+    <FrameLayout
+        android:id="@+id/frameLayoutContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNav" />
+
+
+    <LinearLayout
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        android:elevation="60dp"
+        android:background="@drawable/bottom_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+        <ImageButton
+            android:id="@+id/musicB"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:padding="0dp"
+            android:backgroundTint="@color/transparent"
+            android:src="@drawable/music_note"
+            android:scaleType="fitCenter"
+            android:layout_weight="1"
+            android:layout_gravity="center"/>
+        <ImageButton
+            android:id="@+id/roomB"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:padding="0dp"
+            android:backgroundTint="@color/transparent"
+            android:src="@drawable/settings"
+            android:scaleType="fitCenter"
+            android:layout_weight="1"
+            android:layout_gravity="center"/>
+        <ImageButton
+            android:id="@+id/friendsB"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:padding="0dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/transparent"
+            android:src="@drawable/connect_svgrepo_com"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center"/>
+        <ImageButton
+            android:id="@+id/profileB"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:padding="0dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/transparent"
+            android:src="@drawable/profile_svgrepo_com"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center"/>
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

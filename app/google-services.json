@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "986490054361",
+    "firebase_url": "https://duet-ly-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "duet-ly",
+    "storage_bucket": "duet-ly.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:986490054361:android:4667265a4d38ddc8f980c8",
+        "android_client_info": {
+          "package_name": "com.example.duetly"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDv3dj6bz6z5g8rzcCF6YFejx7-XGe7KFE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
