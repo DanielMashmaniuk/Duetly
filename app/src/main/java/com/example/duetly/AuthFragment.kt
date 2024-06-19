@@ -18,6 +18,9 @@ import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.example.duetly.Models.RegisterRequest
+import com.example.duetly.Models.RegisterResponse
+import com.example.duetly.Models.RetrofitClient
 import com.example.duetly.Models.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.actionCodeSettings
@@ -34,6 +37,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.Random
 import java.util.regex.Pattern
 
@@ -327,26 +333,31 @@ class AuthFragment : Fragment() {
             actionsL.orientation = LinearLayout.HORIZONTAL
         }
     }
-    private fun sendSignInLinkToEmail(email: String, username: String, password: String) {
-        val actionCodeSettings = actionCodeSettings {
-            url = "https://www.archi-app.website/finishSignUp?username=$username&password=$password"
-            handleCodeInApp = true
-            setIOSBundleId("com.example.ios")
-            setAndroidPackageName(
-                "com.example.duetly",
-                true, /* installIfNotAvailable */
-                "12" /* minimumVersion */
-            )
-        }
-
-        Firebase.auth.sendSignInLinkToEmail(email, actionCodeSettings)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    showToast(requireContext(), "Email sent.")
+    private fun registerUser(email: String, password: String) {
+        val request = RegisterRequest(email, password)
+        RetrofitClient.api.registerUser(request).enqueue(object : Callback<RegisterResponse> {
+            override fun onResponse(call: Call<RegisterResponse>, response: Response<RegisterResponse>) {
+                if (response.isSuccessful) {
+                    // Обробка успішного запиту
+                    val registerResponse = response.body()
+                    if (registerResponse?.success == true) {
+                        // Реєстрація успішна
+                        Log.d("Register", "Registration successful: ${registerResponse.message}")
+                    } else {
+                        // Помилка реєстрації
+                        Log.e("Register", "Registration failed: ${registerResponse?.message}")
+                    }
                 } else {
-                    showToast(requireContext(), "Error: ${task.exception?.message}")
+                    // Помилка відповіді сервера
+                    Log.e("Register", "Server error: ${response.errorBody()?.string()}")
                 }
             }
+
+            override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
+                // Обробка помилки запиту
+                Log.e("Register", "Request failed: ${t.message}")
+            }
+        })
     }
 
 }
