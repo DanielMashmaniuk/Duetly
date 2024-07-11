@@ -60,15 +60,12 @@ class MainActivity : AppCompatActivity(),ReloadFragment {
         setContentView(R.layout.activity_main)
         FirebaseApp.initializeApp(this)
         dbHelper = DbHelper(this, null)
+        MediaPlayerManager.initialize(this,"null")
         val fireDatabase = Firebase.database
         val user = dbHelper.getUser()
         val musActive = dbHelper.getPlayingMusicForId(1)
         music = musActive?.let { dbHelper.getMusic(it.idMusic) }?: MusicInfo()
         MediaPlayerManager.initialize(this,music.data)
-        if (musActive != null) {
-            val serviceIntent = Intent(this, MusicService::class.java)
-            startService(serviceIntent)
-        }
         if (user.username == "32"){
             dbHelper.createUser(User("404","404","404"),this)
         }

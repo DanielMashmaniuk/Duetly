@@ -26,10 +26,15 @@ android {
             )
         }
     }
+    packagingOptions {
+        exclude("META-INF/LICENSE.md")
+        exclude("META-INF/NOTICE.md")
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
@@ -37,8 +42,10 @@ android {
 
 dependencies {
     implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.test.espresso:espresso-core:3.5.1@aar")
+    implementation("androidx.test.espresso:espresso-core:3.6.1@aar")
     implementation ("androidx.media:media:1.7.0")
+    implementation ("com.sun.mail:android-mail:1.6.7")
+    implementation ("com.sun.mail:android-activation:1.6.7")
     implementation ("commons-logging:commons-logging:1.2")
     implementation ("com.google.code.gson:gson:2.10")
     implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
@@ -53,5 +60,5 @@ dependencies {
     implementation("androidx.media3:media3-test-utils:1.3.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
 }

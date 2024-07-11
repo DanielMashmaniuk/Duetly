@@ -47,7 +47,6 @@ import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.duetly.MusicService.Companion.CHANNEL_ID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -166,8 +165,6 @@ class MainMusicList : Fragment() {
             }
             if (aMusicInfo!!.idMusic != -1L && isM) {
                 isActiveWindow = true
-                createNotificationChannel()
-
                 setAnimMusicWindow(musicWindow)
                 mediaPlayer = MediaPlayerManager.getMediaPlayer()
                 songName.text = music.displayName
@@ -1096,9 +1093,6 @@ class MainMusicList : Fragment() {
                 mediaPlayer.stop()
             }
         }
-        if (!isActiveWindow){
-            createNotificationChannel()
-        }
         val hsList = dbHelper.getAllMusicsFromH()
         val checkList = hsList.sortedBy { it.id }
         val hm = dbHelper.getMFromH(mus.id)
@@ -1345,20 +1339,6 @@ class MainMusicList : Fragment() {
         }
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = musicAdapter
-    }
-    private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                CHANNEL_ID,
-                "Music Channel",
-                NotificationManager.IMPORTANCE_LOW
-            ).apply {
-                description = "Channel for music controls"
-            }
-            showToast(requireContext(),"FRAME")
-            val notificationManager: NotificationManager? = getSystemService(requireContext(),NotificationManager::class.java)
-            notificationManager?.createNotificationChannel(channel)
-        }
     }
 
 }
