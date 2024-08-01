@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ProfileUserFragment">
+    tools:context=".fragments.ProfileUserFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -23,18 +23,37 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
+        <EditText
             android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="UserName"
+            android:hint="Nickname..."
+            android:textColorHint="@color/colorS"
+            android:maxLength="30"
+            android:minWidth="30dp"
+            android:textAlignment="center"
+            android:background="@null"
             android:textColor="@color/light"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="@+id/imageView5"
             app:layout_constraintStart_toStartOf="@+id/imageView5"
             app:layout_constraintTop_toBottomOf="@+id/imageView5" />
+
+        <ImageButton
+            android:id="@+id/safeNickname"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@color/transparent"
+            android:padding="5dp"
+            android:layout_marginLeft="5dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/check"
+            app:layout_constraintBottom_toTopOf="@+id/gridLayout"
+            app:layout_constraintStart_toEndOf="@+id/textView4"
+            app:layout_constraintTop_toTopOf="@+id/textView4" />
 
         <GridLayout
             android:id="@+id/gridLayout"
@@ -70,15 +89,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginLeft="15dp"
                     android:text="Settings"
+                    android:padding="0dp"
                     android:textColor="@color/dark"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/rename"
+                android:id="@+id/renameNickname"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_row="0"
@@ -99,10 +119,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginLeft="15dp"
                     android:text="Change Name"
                     android:textColor="@color/dark"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -115,23 +135,33 @@
                 android:background="@drawable/bg_sec_color"
                 android:orientation="horizontal"
                 android:padding="10dp"
+                android:gravity="center"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView4">
 
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:src="@drawable/contrast_filled_svgrepo_com" />
+                    android:src="@drawable/sun_svgrepo_com" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="10dp"
-                    android:text="Theme"
-                    android:textColor="@color/dark"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                <LinearLayout
+                    android:id="@+id/switchTrack"
+                    android:layout_width="40dp"
+                    android:layout_height="20dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:orientation="horizontal"
+                    android:background="@drawable/track_unchecked">
+                    <LinearLayout
+                        android:id="@+id/switchThumb"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:background="@drawable/thumb_unchecked"
+                        android:orientation="horizontal"/>
+                </LinearLayout>
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/moon_stars_svgrepo_com" />
             </LinearLayout>
 
             <LinearLayout
@@ -155,10 +185,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginLeft="15dp"
                     android:text="Log Out"
                     android:textColor="@color/dark"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -198,17 +228,6 @@
                 app:layout_constraintStart_toEndOf="@+id/imageView6"
                 app:layout_constraintTop_toTopOf="@+id/imageView6" />
 
-            <ImageButton
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:layout_marginEnd="20dp"
-                android:backgroundTint="@color/transparent"
-                android:padding="0dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/eye_svgrepo_com"
-                app:layout_constraintBottom_toBottomOf="@+id/textView9"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/textView9" />
 
             <TextView
                 android:id="@+id/textView9"
@@ -254,17 +273,6 @@
                 app:layout_constraintStart_toEndOf="@+id/imageView7"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageButton
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:layout_marginEnd="20dp"
-                android:backgroundTint="@color/transparent"
-                android:padding="0dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/eye_svgrepo_com"
-                app:layout_constraintBottom_toBottomOf="@+id/textView8"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/textView8" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/list_item"
@@ -273,7 +281,7 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/bg_sec_color_circle"
                 app:layout_constraintTop_toBottomOf="@+id/textView8"
-                tools:context=".music_list_item"
+                tools:context=".items.music_list_item"
                 tools:layout_editor_absoluteX="12dp">
 
                 <ImageView

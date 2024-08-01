@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+  <!-- Голова -->
+  <path
+      android:fillColor="#FFD700"
+      android:pathData="M100,30 A70,70 0 1,0 100,170 A70,70 0 1,0 100,30 Z"/>
+
+  <!-- Ліве вухо навушника -->
+  <path
+      android:strokeColor="#000000"
+      android:strokeWidth="8"
+      android:fillColor="@android:color/transparent"
+      android:pathData="M30,100 Q30,50 50,50 Q70,50 70,100"/>
+  <path
+      android:fillColor="#000000"
+      android:pathData="M20,50 H60 V110 H20 Z"/>
+
+  <!-- Праве вухо навушника -->
+  <path
+      android:strokeColor="#000000"
+      android:strokeWidth="8"
+      android:fillColor="@android:color/transparent"
+      android:pathData="M170,100 Q170,50 150,50 Q130,50 130,100"/>
+  <path
+      android:fillColor="#000000"
+      android:pathData="M140,50 H180 V110 H140 Z"/>
+
+  <!-- Верхня частина навушника (з'єднання через голову) -->
+  <path
+      android:fillColor="#000000"
+      android:pathData="M70,50 Q100,20 130,50"/>
+
+</vector>

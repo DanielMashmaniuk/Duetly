@@ -6,7 +6,7 @@
     <color name="blue">#371E70</color>
     <color name="dark">#0B0113</color>
 
-    <color name="mainBGColor">#000000</color>
+    <color name="mainBGColor">#F6FFF8</color>
     <color name="secBGColor">#0E0E0E</color>
     <color name="light">#F6FFF8</color>
     <color name="colorPrimaryDark">#E617022B</color>
@@ -14,10 +14,9 @@
     <color name="colorS">#CC08010F</color>
     <color name="transparent">#0017022B</color>
     <color name="bgItem">#090909</color>
-    <color name="gray">#2E2E2E</color>
+    <color name="gray">#2E2E2E</color>#
     <color name="red">#FF0000</color>
-
-
+    <color name="green">#00A36C</color>
 
 
 </resources>

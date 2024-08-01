@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="pryColor">#17022B</color>
+    <color name="secColor">#7C0065</color>
+    <color name="colorZ">#60034E</color>
+    <color name="blue">#371E70</color>
+    <color name="dark">#0B0113</color>
+
+    <color name="mainBGColor">#000000</color>
+    <color name="secBGColor">#0E0E0E</color>
+    <color name="light">#F6FFF8</color>
+    <color name="colorPrimaryDark">#E617022B</color>
+
+    <color name="colorS">#CC08010F</color>
+    <color name="transparent">#0017022B</color>
+    <color name="bgItem">#090909</color>
+    <color name="gray">#2E2E2E</color>
+    <color name="red">#FF0000</color>
+    <color name="green">#00A36C</color>
+
+
+</resources>
