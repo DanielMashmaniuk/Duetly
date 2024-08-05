@@ -127,7 +127,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/theme"
+                android:id="@+id/userMessages"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
@@ -135,33 +135,24 @@
                 android:background="@drawable/bg_sec_color"
                 android:orientation="horizontal"
                 android:padding="10dp"
-                android:gravity="center"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView4">
 
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:src="@drawable/sun_svgrepo_com" />
+                    android:src="@drawable/emails_messages_que_mails_copy_duplicate_svgrepo_com" />
 
-                <LinearLayout
-                    android:id="@+id/switchTrack"
-                    android:layout_width="40dp"
-                    android:layout_height="20dp"
-                    android:layout_marginHorizontal="20dp"
-                    android:orientation="horizontal"
-                    android:background="@drawable/track_unchecked">
-                    <LinearLayout
-                        android:id="@+id/switchThumb"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:background="@drawable/thumb_unchecked"
-                        android:orientation="horizontal"/>
-                </LinearLayout>
-                <ImageView
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:src="@drawable/moon_stars_svgrepo_com" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="15dp"
+                    android:text="Messages"
+                    android:padding="0dp"
+                    android:textColor="@color/dark"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
@@ -281,7 +272,7 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/bg_sec_color_circle"
                 app:layout_constraintTop_toBottomOf="@+id/textView8"
-                tools:context=".items.music_list_item"
+                tools:context=".notysfications.music_list_item"
                 tools:layout_editor_absoluteX="12dp">
 
                 <ImageView

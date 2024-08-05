@@ -10,7 +10,8 @@ data class User(
     var username: String = "404",
     var email: String = "404",
     private var password: String = "404",
-    var settings: UserSettings = UserSettings()
+    var settings: UserSettings = UserSettings(),
+    val melodymates: MutableList<Melodymate> = mutableListOf()
 ) : Parcelable {
     private var hashedPassword: String = ""
 

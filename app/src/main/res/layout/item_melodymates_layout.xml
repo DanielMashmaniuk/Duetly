@@ -7,8 +7,8 @@
     android:layout_height="45dp"
     android:layout_marginVertical="8dp"
     android:layout_marginHorizontal="5dp"
-    android:background="@drawable/background_music_list_item"
-    tools:context=".items.music_list_item">
+    android:background="@drawable/bg_sec_color"
+    tools:context=".notysfications.music_list_item">
 
     <ImageView
         android:id="@+id/imageView"
@@ -36,15 +36,23 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/songTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
-        android:text="3:40"
-        android:textColor="@color/light"
-        android:textSize="15sp"
+        android:text="offline"
+        android:layout_marginRight="5dp"
+        android:textSize="14sp"
         android:textStyle="bold"
-        android:typeface="monospace"
+        android:textColor="@color/dark"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imageView9"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView9"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginRight="10dp"
+        android:src="@drawable/offline_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

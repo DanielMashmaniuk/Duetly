@@ -8,7 +8,7 @@
     android:layout_marginVertical="8dp"
     android:layout_marginHorizontal="5dp"
     android:background="@drawable/background_black_w_prycolor"
-    tools:context=".items.music_list_item">
+    tools:context=".notysfications.music_list_item">
 
     <ImageView
         android:id="@+id/imageView"
