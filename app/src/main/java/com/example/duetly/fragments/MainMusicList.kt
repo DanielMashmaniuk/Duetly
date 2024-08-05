@@ -39,7 +39,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.duetly.activities.paintIcon
@@ -75,7 +74,7 @@ data class Playlist(
 )
 
 
-class MainMusicList : Fragment(),AlertDialog.OnAlertDialogResultListener {
+class MainMusicList : Fragment(),AlertDialog.AlertDialogResult {
     private var startY = 0f
     private lateinit var editText: EditText
     private lateinit var searchMusic: ConstraintLayout

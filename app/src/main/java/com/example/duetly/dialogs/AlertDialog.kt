@@ -1,6 +1,7 @@
 package com.example.duetly.dialogs
 
 import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,17 +10,25 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.example.duetly.R
+import com.example.duetly.activities.ReloadFragment
 
 class AlertDialog(titleDialog:String,describeDialog:String) : DialogFragment() {
     private lateinit var rootView: View
     val title = titleDialog
     val describe = describeDialog
-    interface OnAlertDialogResultListener {
+    interface AlertDialogResult {
         fun onDialogResult(result: Boolean)
     }
 
-    private var listener: OnAlertDialogResultListener? = null
-
+    private var listener: AlertDialogResult? = null
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is AlertDialogResult) {
+            listener = context
+        } else {
+            throw ClassCastException("$context must implement OnDataPassListener")
+        }
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

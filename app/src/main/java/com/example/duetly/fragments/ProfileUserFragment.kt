@@ -26,7 +26,6 @@ import com.example.duetly.activities.decodeEmail
 import com.example.duetly.activities.encodeEmail
 import com.example.duetly.activities.showToast
 import com.example.duetly.dialogs.AlertDialog
-import com.example.duetly.dialogs.LocalSettingsDialog
 import com.example.duetly.dialogs.UserSettingsDialog
 import com.example.duetly.models.UserSettings
 import com.google.firebase.database.FirebaseDatabase
@@ -38,7 +37,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.util.regex.Pattern
 
-class ProfileUserFragment : Fragment(), AlertDialog.OnAlertDialogResultListener {
+class ProfileUserFragment : Fragment(), AlertDialog.AlertDialogResult {
     private var fragmentReloadListener: ReloadFragment? = null
     private var asyncJob: Job? = null
     override fun onAttach(context: Context) {
@@ -78,7 +77,7 @@ class ProfileUserFragment : Fragment(), AlertDialog.OnAlertDialogResultListener 
         val logOutButton = rootView.findViewById<LinearLayout>(R.id.out)
         val settingsB = rootView.findViewById<LinearLayout>(R.id.settings)
         val safeNicknameB = rootView.findViewById<ImageButton>(R.id.safeNickname)
-        val themeB = rootView.findViewById<LinearLayout>(R.id.theme)
+        val userMessagesB = rootView.findViewById<LinearLayout>(R.id.userMessages)
 
         val context = requireContext()
         safeNicknameB.visibility = View.GONE
@@ -130,10 +129,10 @@ class ProfileUserFragment : Fragment(), AlertDialog.OnAlertDialogResultListener 
                 isRenaming = false
             }
         }
-        themeB.setOnClickListener{
+        userMessagesB.setOnClickListener{
             //val userSettingsDialog = UserSettingsDialog(fireDatabase,user.settings)
             //userSettingsDialog.show(parentFragmentManager,UserSettingsDialog.TAG)
-            themeB.animateSize()
+            userMessagesB.animateSize()
         }
         logOutButton.setOnClickListener {
             val alertDialog = AlertDialog("Log Out","Are you sure you want to log out of your account?")
