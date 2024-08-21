@@ -126,7 +126,7 @@ class MainMusicList : Fragment(),AlertDialog.AlertDialogResult {
         musicRec = rootView.findViewById(R.id.musicList)
         musicWindow = rootView.findViewById(R.id.musicWindow)
         playlistInfo = rootView.findViewById(R.id.playlistInfo)
-        songName = rootView.findViewById(R.id.songName)
+        songName = rootView.findViewById(R.id.name)
         pauseImage = rootView.findViewById(R.id.pause)
         resumeImage = rootView.findViewById(R.id.resume)
         dbHelper = DbHelper(requireContext(), null)
@@ -575,7 +575,7 @@ class MainMusicList : Fragment(),AlertDialog.AlertDialogResult {
             true
         }
 
-        val songNameT = popupView.findViewById<TextView>(R.id.songName)
+        val songNameT = popupView.findViewById<TextView>(R.id.name)
         val artistT = popupView.findViewById<TextView>(R.id.songArtist)
         val currentTimeT = popupView.findViewById<TextView>(R.id.currentTime)
         val songTimeT = popupView.findViewById<TextView>(R.id.textView)

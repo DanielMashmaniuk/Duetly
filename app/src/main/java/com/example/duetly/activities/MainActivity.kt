@@ -6,6 +6,7 @@ import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Context
+import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -32,14 +33,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.duetly.fragments.AuthFragment
 import com.example.duetly.DbHelper
 import com.example.duetly.fragments.MainMusicList
 import com.example.duetly.MediaPlayerManager
+import com.example.duetly.NetworkChangeReceiver
 import com.example.duetly.models.User
 import com.example.duetly.fragments.MusicInfo
 import com.example.duetly.fragments.ProfileUserFragment
 import com.example.duetly.R
+import com.example.duetly.dialogs.AlertDialog
 import com.example.duetly.fragments.MelodyMatesFragment
 import com.example.duetly.fragments.NotAvialiableInternetFragment
 import com.example.duetly.fragments.waitAnimation
@@ -61,17 +65,23 @@ interface ReloadFragment {
     fun onFragment(fragment: Fragment,isAuth: Boolean)
 }
 
-class MainActivity : AppCompatActivity(), ReloadFragment {
-    private var isAllowS = false
-    private lateinit var musicListNavB: ImageButton
-    private lateinit var profileNavB: ImageButton
-
+class MainActivity : AppCompatActivity(), ReloadFragment, AlertDialog.AlertDialogResult {
     private lateinit var mediaPlayer:MediaPlayer
     private lateinit var dbHelper: DbHelper
     private lateinit var fireDatabase: FirebaseDatabase
-    private var music = MusicInfo()
-    private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
+    private lateinit var networkChangeReceiver: NetworkChangeReceiver
+
+    private var isAllowS = false
     private var isAutorised = false
+    private var isUserProfile = false
+
+    private lateinit var musicListNavB: ImageButton
+    private lateinit var profileNavB: ImageButton
+    private lateinit var friendsNavB: ImageButton
+
+    private var music = MusicInfo()
+    private var userProfile = User()
+    private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -79,25 +89,48 @@ class MainActivity : AppCompatActivity(), ReloadFragment {
         dbHelper = DbHelper(this, null)
         MediaPlayerManager.initialize(this, "null")
         fireDatabase = Firebase.database
-        val user = dbHelper.getUser()
-        CoroutineScope(Dispatchers.Main).launch {
-            checkExistUser(user) {
-                isAutorised = it
-                if (!isAutorised){
-                    dbHelper.updateUser(User())
+        networkChangeReceiver = NetworkChangeReceiver()
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                getUser(dbHelper) {
+                    isUserProfile = (it?.username ?: User()) != "404"
+                    userProfile = it?:User()
                 }
             }
         }
+        val user = dbHelper.getUser()
+        if (user.username == "32"){
+            dbHelper.createUser(
+                User(
+                    username = "404",
+                    email = "404",
+                    password = "404",
+                ),
+                this
+            )
+        }
+
+        if (user.username != "404") {
+            CoroutineScope(Dispatchers.Main).launch {
+                checkExistUser(user) {
+                    isAutorised = it
+                    if (!isAutorised) {
+                        dbHelper.updateUser(User())
+                    }
+                }
+            }
+        }else{
+            isAutorised = false
+        }
+
         val musActive = dbHelper.getPlayingMusicForId(1)
         music = musActive?.let { dbHelper.getMusic(it.idMusic) }?: MusicInfo()
         MediaPlayerManager.initialize(this, music.data)
-        if (user.username == "32"){
-            dbHelper.createUser(User("404","404","404", UserSettings()),this)
-        }
+
         val bottomNavL = findViewById<LinearLayout>(R.id.bottomNav)
         musicListNavB = findViewById(R.id.musicB)
         val roomNavB = findViewById<ImageButton>(R.id.roomB)
-        val friendsNavB = findViewById<ImageButton>(R.id.friendsB)
+        friendsNavB = findViewById<ImageButton>(R.id.friendsB)
         profileNavB = findViewById(R.id.profileB)
         CoroutineScope(Dispatchers.Main).launch {
             startAppAnimation()
@@ -146,30 +179,46 @@ class MainActivity : AppCompatActivity(), ReloadFragment {
         profileNavB.setOnClickListener {
             if (isInternetAvailable(this)) {
                 if (isAutorised) {
-                    val contextMain = this
-                    val waitView = waitAnimation(this)
-                    GlobalScope.launch(Dispatchers.IO) {
-                        getUser(contextMain) {
-                            val bundle = Bundle()
-                            bundle.putParcelable("user", it)
-                            val fragment = ProfileUserFragment()
-                            fragment.arguments = bundle
-                            setFragment(fragment)
-                            GlobalScope.launch(Dispatchers.Main) {
-                                setFragment(fragment)
-                                waitView.dismiss()
+                    if (!isUserProfile) {
+                        val waitView = waitAnimation(this)
+                        lifecycleScope.launch {
+                            withContext(Dispatchers.IO) {
+                                getUser(dbHelper) {
+                                    val bundle = Bundle().apply {
+                                        putParcelable("user", it)
+                                    }
+
+                                    val fragment = ProfileUserFragment().apply {
+                                        arguments = bundle
+                                    }
+
+                                    setFragment(fragment)
+                                    waitView.dismiss()
+                                }
                             }
+
+
                         }
+                    }else{
+                        val bundle = Bundle().apply {
+                            putParcelable("user", userProfile)
+                        }
+
+                        val fragment = ProfileUserFragment().apply {
+                            arguments = bundle
+                        }
+
+                        setFragment(fragment)
                     }
                 } else {
                     setFragment(AuthFragment())
                 }
-                //changeColor(this,bottomNavL)
-                musicListNavB.isEnabled = true
-                profileNavB.isEnabled = false
             }else{
                 setFragment(NotAvialiableInternetFragment())
             }
+            musicListNavB.isEnabled = true
+            profileNavB.isEnabled = false
+            friendsNavB.isEnabled = true
         }
         friendsNavB.setOnClickListener{
             if (isInternetAvailable(this)){
@@ -177,16 +226,22 @@ class MainActivity : AppCompatActivity(), ReloadFragment {
             }else{
                 setFragment(NotAvialiableInternetFragment())
             }
+            musicListNavB.isEnabled = true
+            profileNavB.isEnabled = true
+            friendsNavB.isEnabled = false
         }
         musicListNavB.setOnClickListener {
             if (isAllowS) {
                 setFragment(MainMusicList())
                 musicListNavB.isEnabled = false
                 profileNavB.isEnabled = true
-
+                friendsNavB.isEnabled = true
             } else {
                 showToast(this, "Unable to upload files (no appropriate permission)")
                 checkPermissionAndExecuteFunction(this)
+                musicListNavB.isEnabled = true
+                profileNavB.isEnabled = true
+                friendsNavB.isEnabled = true
             }
         }
 
@@ -195,18 +250,23 @@ class MainActivity : AppCompatActivity(), ReloadFragment {
     override fun onFragment(fragment: Fragment,isAuth: Boolean) {
         isAutorised = isAuth
         if (isAutorised){
-            val contextMain = this
             val waitView = waitAnimation(this)
-            GlobalScope.launch(Dispatchers.IO) {
-                getUser(contextMain) {
-                    val bundle = Bundle()
-                    bundle.putParcelable("user", it)
-                    fragment.arguments = bundle
-                    setFragment(fragment)
-                    GlobalScope.launch(Dispatchers.Main) {
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO) {
+                    getUser(dbHelper) {
+                        val bundle = Bundle().apply {
+                            putParcelable("user", it)
+                        }
+
+                        val fragment = ProfileUserFragment().apply {
+                            arguments = bundle
+                        }
+
                         setFragment(fragment)
-                        waitView.dismiss()
                     }
+                }
+                withContext(Dispatchers.Main) {
+                    waitView.dismiss()
                 }
             }
         }else {
@@ -216,12 +276,34 @@ class MainActivity : AppCompatActivity(), ReloadFragment {
         musicListNavB.isEnabled = true
         profileNavB.isEnabled = false
     }
+    override fun onStart() {
+        super.onStart()
+        val isNet = isInternetAvailable(this)
+        if (isNet) {
+            setStatusOnline()
+        }
+        registerReceiver(networkChangeReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+
+    }
+    override fun onStop() {
+        super.onStop()
+        val isNet = isInternetAvailable(this)
+        if (isNet) {
+            setStatusOffline()
+        }
+        unregisterReceiver(networkChangeReceiver)
+
+    }
     override fun onDestroy() {
         super.onDestroy()
         if (music.data != ""){
             mediaPlayer.stop()
             val currentPosition = mediaPlayer.currentPosition
             dbHelper.updatePM(music.id, 1, currentPosition)
+        }
+        val isNet = isInternetAvailable(this)
+        if (isNet) {
+            setStatusOffline()
         }
     }
     private fun setFragment(fragment: Fragment) {
@@ -301,6 +383,39 @@ class MainActivity : AppCompatActivity(), ReloadFragment {
             "system" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         }
     }
+    private fun setStatusOnline() {
+        dbHelper = DbHelper(this,null)
+        val user = dbHelper.getUser()
+        val usersRef = FirebaseDatabase.getInstance().getReference("users")
+        val encodedEmail = encodeEmail(user.email)
+        usersRef.child(encodedEmail).child("isOnline").setValue("true")
+            .addOnSuccessListener {
+                println("Статус онлайн встановлено успішно")
+            }
+            .addOnFailureListener { e ->
+                println("Помилка встановлення статусу онлайн: ${e.message}")
+            }
+    }
+
+    private fun setStatusOffline() {
+        val usersRef = FirebaseDatabase.getInstance().getReference("users")
+        val user = dbHelper.getUser()
+        val encodedEmail = encodeEmail(user.email)
+        usersRef.child(encodedEmail).child("isOnline").setValue("false")
+            .addOnSuccessListener {
+                println("Статус офлайн встановлено успішно")
+            }
+            .addOnFailureListener { e ->
+                println("Помилка встановлення статусу офлайн: ${e.message}")
+            }
+    }
+
+    override fun onDialogResult(result: Boolean) {
+        if (result){
+            isAutorised = false
+            setFragment(AuthFragment())
+        }
+    }
 }
 
 fun animateTextChange(newChar: Char,editText: EditText) {
@@ -371,17 +486,16 @@ fun fetchUserData(userLoc: User, callback: (User?) -> Unit) {
     val encEmail = encodeEmail( userLoc.email.trim())
     val userRef = Firebase.database.getReference("users").child(encEmail)
     userRef.get().addOnSuccessListener { dataSnapshot ->
-        val userF = dataSnapshot.getValue<User>()
+        val userF = dataSnapshot.getValue<User>()?:User()
         callback(userF)
     }.addOnFailureListener {
         callback(null)
     }
 }
-suspend fun getUser(context: Context,sendUser: (User?) -> Unit){
-    val dbHelper = DbHelper(context,null)
+suspend fun getUser(dbHelper: DbHelper,sendUser: (User?) -> Unit){
     val userL = dbHelper.getUser()
     val userF = withContext(Dispatchers.IO) {
-        suspendCancellableCoroutine<User?> { continuation ->
+        suspendCancellableCoroutine { continuation ->
             fetchUserData(userL) { user ->
                 continuation.resume(user, null)
             }

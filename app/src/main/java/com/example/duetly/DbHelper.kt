@@ -418,13 +418,19 @@ fun createUser(user: User,context: Context) {
 
         val query = "SELECT * FROM user WHERE id = ?"
         val cursor = db.rawQuery(query, arrayOf("1"))
-        var user = User("32","404","404")
+        var user = User(
+            username = "32",
+            email = "404",
+            password = "404")
         cursor.use {
             if (it.moveToFirst()) {
                 val username = it.getString(it.getColumnIndexOrThrow("username"))
                 val email = it.getString(it.getColumnIndexOrThrow("email"))
                 val password = it.getString(it.getColumnIndexOrThrow("password"))
-                user = User(username,email,password)
+                user = User(
+                    username =username,
+                    email = email,
+                    password = password)
             }
         }
         cursor.close()

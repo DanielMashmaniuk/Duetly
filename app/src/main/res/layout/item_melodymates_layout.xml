@@ -7,8 +7,7 @@
     android:layout_height="45dp"
     android:layout_marginVertical="8dp"
     android:layout_marginHorizontal="5dp"
-    android:background="@drawable/bg_sec_color"
-    tools:context=".notysfications.music_list_item">
+    android:background="@drawable/bg_dark">
 
     <ImageView
         android:id="@+id/imageView"
@@ -21,12 +20,13 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/songName"
-        android:layout_width="130dp"
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:ellipsize="end"
         android:maxLines="1"
+        android:maxWidth="130dp"
         android:text="MARK"
         android:textColor="@color/light"
         android:textSize="15sp"
@@ -35,18 +35,31 @@
         app:layout_constraintStart_toEndOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <LinearLayout
+        android:id="@+id/linearLayout4"
+        android:layout_width="3dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="10dp"
+        android:background="@color/secColor"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@+id/name"
+        app:layout_constraintStart_toEndOf="@+id/name"
+        app:layout_constraintTop_toTopOf="@+id/name" />
+
     <TextView
+        android:id="@+id/genre"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="offline"
-        android:layout_marginRight="5dp"
+        android:layout_marginStart="10dp"
+        android:ellipsize="end"
+        android:maxWidth="130dp"
+        android:maxLines="1"
+        android:text="FONK"
+        android:textColor="@color/secColor"
         android:textSize="14sp"
-        android:textStyle="bold"
-        android:textColor="@color/dark"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/imageView9"
+        app:layout_constraintStart_toEndOf="@+id/linearLayout4"
         app:layout_constraintTop_toTopOf="parent" />
-
     <ImageView
         android:id="@+id/imageView9"
         android:layout_width="20dp"
@@ -56,5 +69,19 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="5dp"
+        android:text="offline"
+        android:textColor="@color/secColor"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imageView9"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

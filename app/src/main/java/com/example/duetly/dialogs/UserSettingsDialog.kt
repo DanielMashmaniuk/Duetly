@@ -21,17 +21,17 @@ import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class UserSettingsDialog(firebaseDatabase: FirebaseDatabase,settings: UserSettings) : DialogFragment() {
+class UserSettingsDialog(settings: UserSettings) : DialogFragment() {
     private lateinit var rootView: View
     var userSettings = settings
-    val fireDatabase = firebaseDatabase
+    private lateinit var fireDatabase : FirebaseDatabase
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         rootView = inflater.inflate(R.layout.user_settings_layout, container, false)
-
+        fireDatabase = FirebaseDatabase.getInstance()
         val switchTrack = rootView.findViewById<LinearLayout>(R.id.switchTrack)
         val switchThumb = rootView.findViewById<LinearLayout>(R.id.switchThumb)
         val dbHelper = DbHelper(requireContext(),null)

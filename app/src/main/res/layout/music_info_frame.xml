@@ -44,7 +44,7 @@
             android:src="@drawable/heart_angle_svgrepo_com"
             app:layout_constraintEnd_toEndOf="@+id/musicImage"
             app:layout_constraintStart_toEndOf="@+id/musicImage"
-            app:layout_constraintTop_toTopOf="@+id/songName" />
+            app:layout_constraintTop_toTopOf="@+id/name" />
         <ImageButton
             android:id="@+id/favoriteTrue"
             android:layout_width="30dp"
@@ -55,9 +55,9 @@
             android:src="@drawable/favorites"
             app:layout_constraintEnd_toEndOf="@+id/musicImage"
             app:layout_constraintStart_toEndOf="@+id/musicImage"
-            app:layout_constraintTop_toTopOf="@+id/songName" />
+            app:layout_constraintTop_toTopOf="@+id/name" />
         <TextView
-            android:id="@+id/songName"
+            android:id="@+id/name"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
@@ -80,9 +80,9 @@
             android:text="Author"
             android:textColor="@color/light"
             android:textSize="15sp"
-            app:layout_constraintEnd_toEndOf="@+id/songName"
-            app:layout_constraintStart_toStartOf="@+id/songName"
-            app:layout_constraintTop_toBottomOf="@+id/songName" />
+            app:layout_constraintEnd_toEndOf="@+id/name"
+            app:layout_constraintStart_toStartOf="@+id/name"
+            app:layout_constraintTop_toBottomOf="@+id/name" />
 
         <androidx.appcompat.widget.AppCompatSeekBar
             android:id="@+id/currentTimeLine"

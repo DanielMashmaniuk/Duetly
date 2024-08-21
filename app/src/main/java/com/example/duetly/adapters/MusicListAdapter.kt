@@ -55,7 +55,7 @@ class MusicListAdapter(
             listSize: Int
         ) {
             val layItem = itemView.findViewById<ConstraintLayout>(R.id.list_item)
-            val musicName: TextView = itemView.findViewById(R.id.songName)
+            val musicName: TextView = itemView.findViewById(R.id.name)
             val musicArtist: TextView = itemView.findViewById(R.id.songArtist)
             val musicTime = itemView.findViewById<TextView>(R.id.songTime)
             val imageV = itemView.findViewById<ImageView>(R.id.imageView)

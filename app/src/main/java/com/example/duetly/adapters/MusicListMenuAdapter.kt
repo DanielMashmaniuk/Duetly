@@ -44,7 +44,7 @@ class MusicListMenuAdapter(
             position: Int,
         ) {
             val layItem = itemView.findViewById<ConstraintLayout>(R.id.list_item)
-            val musicName: TextView = itemView.findViewById(R.id.songName)
+            val musicName: TextView = itemView.findViewById(R.id.name)
             val musicTime = itemView.findViewById<TextView>(R.id.duration)
             val imageV = itemView.findViewById<ImageView>(R.id.imageView)
             val dbHelper = DbHelper(context, null)

@@ -26,10 +26,14 @@ import com.example.duetly.activities.decodeEmail
 import com.example.duetly.activities.encodeEmail
 import com.example.duetly.activities.showToast
 import com.example.duetly.dialogs.AlertDialog
+import com.example.duetly.dialogs.MBoxDialog
 import com.example.duetly.dialogs.UserSettingsDialog
+import com.example.duetly.models.UserMessage
 import com.example.duetly.models.UserSettings
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -39,6 +43,8 @@ import java.util.regex.Pattern
 
 class ProfileUserFragment : Fragment(), AlertDialog.AlertDialogResult {
     private var fragmentReloadListener: ReloadFragment? = null
+    private lateinit var firestore: FirebaseFirestore
+
     private var asyncJob: Job? = null
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -72,6 +78,8 @@ class ProfileUserFragment : Fragment(), AlertDialog.AlertDialogResult {
             user = args.getParcelable<User>("user")!!
             userName = user.username
             setupProfileView(rootView, user)
+            firestore = FirebaseFirestore.getInstance()
+
         }
         val userNicknameET = rootView.findViewById<EditText>(R.id.textView4)
         val logOutButton = rootView.findViewById<LinearLayout>(R.id.out)
@@ -84,7 +92,7 @@ class ProfileUserFragment : Fragment(), AlertDialog.AlertDialogResult {
 
         val renameB = rootView.findViewById<LinearLayout>(R.id.renameNickname)
         settingsB.setOnClickListener{
-            val userSettingsDialog = UserSettingsDialog(fireDatabase,user.settings)
+            val userSettingsDialog = UserSettingsDialog(user.settings)
             userSettingsDialog.show(parentFragmentManager,UserSettingsDialog.TAG)
             settingsB.animateSize()
         }
@@ -130,8 +138,17 @@ class ProfileUserFragment : Fragment(), AlertDialog.AlertDialogResult {
             }
         }
         userMessagesB.setOnClickListener{
-            //val userSettingsDialog = UserSettingsDialog(fireDatabase,user.settings)
-            //userSettingsDialog.show(parentFragmentManager,UserSettingsDialog.TAG)
+            val waitView = waitAnimation(requireContext())
+
+            GlobalScope.launch(Dispatchers.IO) {
+                getAllMessages(user.username) {
+                    val msList = it.toMutableList()
+                    val mBoxDialog = MBoxDialog(msList,user,firestore,fireDatabase)
+                    mBoxDialog.show(parentFragmentManager,MBoxDialog.TAG)
+                    waitView.dismiss()
+                }
+            }
+
             userMessagesB.animateSize()
         }
         logOutButton.setOnClickListener {
@@ -145,7 +162,7 @@ class ProfileUserFragment : Fragment(), AlertDialog.AlertDialogResult {
         val userNameT = rootView.findViewById<EditText>(R.id.textView4)
         val userEmailT = rootView.findViewById<TextView>(R.id.textView9)
 
-        val favSongNameT = rootView.findViewById<TextView>(R.id.songName)
+        val favSongNameT = rootView.findViewById<TextView>(R.id.name)
         val favSongAuthorT = rootView.findViewById<TextView>(R.id.songArtist)
         val favSongTimeT = rootView.findViewById<TextView>(R.id.songTime)
         userNameT.setText(user.username)
@@ -175,9 +192,29 @@ class ProfileUserFragment : Fragment(), AlertDialog.AlertDialogResult {
 
     override fun onDialogResult(result: Boolean) {
         if (result){
-            dbHelper.updateUser(User("404", "404", "404", UserSettings()))
+            dbHelper.updateUser(User(
+                username = "404",
+                email = "404",
+                password = "404",
+                settings = UserSettings()))
             fragmentReloadListener?.onFragment(AuthFragment(), false)
         }
+    }
+    private fun getAllMessages(receivedUser: String, onComplete: (List<UserMessage>) -> Unit) {
+        firestore.collection("messages").document("$receivedUser-messages")
+            .collection("userMessages")
+            .orderBy("timestamp", Query.Direction.ASCENDING) // Сортування за часом
+            .get()
+            .addOnSuccessListener { result ->
+                val messages = result.map { document ->
+                    document.toObject(UserMessage::class.java)
+                }
+                onComplete(messages)
+            }
+            .addOnFailureListener { e ->
+                println("Помилка отримання повідомлень: ${e.message}")
+                onComplete(emptyList())
+            }
     }
     private fun updateUserNickname(email: String, oldUsername: String, newUsername: String, onRenamed: (String) -> Unit) {
         if (oldUsername != newUsername) {

@@ -21,6 +21,7 @@ import com.example.duetly.DbHelper
 import com.example.duetly.dialogs.InputCodeDialog
 import com.example.duetly.models.User
 import com.example.duetly.R
+import com.example.duetly.activities.encodeEmail
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -168,7 +169,7 @@ class AuthFragment : Fragment() {
         })
         logUpB.setOnClickListener {
             if (isLogUp) {
-                if (inputUserName.text.toString().isNotBlank()) {
+                if (inputUserName.text.length > 3) {
                     if (inputEmail.text.toString().isNotBlank()) {
                         if (inputPassword.text.length >= 8) {
                             if (containsSpecialCharacters(inputPassword.text.toString())) {
@@ -178,9 +179,16 @@ class AuthFragment : Fragment() {
                                         email = inputEmail.text.toString().trim()
                                         password = inputPassword.text.toString().trim()
                                         GlobalScope.launch {
-                                            checkAvailableLogin(name){
-                                                if (it) {
-                                                    checkAvailableEmail(email){
+                                            Handler(Looper.getMainLooper()).post {
+
+                                                showToast(
+                                                    requireContext(),
+                                                    "This nickname is already in use, choose another one $name"
+                                                )
+                                            }
+                                            checkAvailableLogin(name) {
+                                                if (it.first) {
+                                                    checkAvailableEmail(email) {
                                                         if (it) {
                                                             if (CODE6.toInt() < 22) {
                                                                 GlobalScope.launch {
@@ -224,11 +232,20 @@ class AuthFragment : Fragment() {
                                                         }
                                                     }
                                                 } else {
-                                                    Handler(Looper.getMainLooper()).post {
-                                                        showToast(
-                                                            requireContext(),
-                                                            "This nickname is already in use, choose another one"
-                                                        )
+                                                    if (it.second){
+                                                        Handler(Looper.getMainLooper()).post {
+                                                            showToast(
+                                                                requireContext(),
+                                                                "Something wrong"
+                                                            )
+                                                        }
+                                                    }else {
+                                                        Handler(Looper.getMainLooper()).post {
+                                                            showToast(
+                                                                requireContext(),
+                                                                "This nickname is already in use, choose another one ${name}"
+                                                            )
+                                                        }
                                                     }
                                                 }
                                             }
@@ -255,7 +272,7 @@ class AuthFragment : Fragment() {
                         showToast(requireContext(), "Email field cannot be empty")
                     }
                 } else {
-                    showToast(requireContext(), "Username field cannot be empty")
+                    showToast(requireContext(), "Username cannot be less than 4 characters")
                 }
             } else {
                 isLogUp = true
@@ -270,44 +287,44 @@ class AuthFragment : Fragment() {
 
         logInB.setOnClickListener {
             if (isLogIn) {
-                if (inputUserName.text.toString() != "") {
-                    if (inputPassword.text.length > 8) {
-                        val userRef = fireDatabase.getReference("users")
-                            .child(inputEmail.text.toString().trim())
-                        userRef.get().addOnSuccessListener { dataSnapshot ->
-                            if (dataSnapshot.exists()) {
-                                val userF = dataSnapshot.getValue<User>()
-                                if (userF != null) {
-                                    if (userF.validatePassword(
-                                            inputPassword.text.toString().trim()
-                                        )
-                                    ) {
-                                        dbHelper.updateUser(
-                                            userF
-                                        )
-                                        fragmentReloadListener?.onFragment(
-                                            ProfileUserFragment(),
-                                            true
-                                        )
-                                    } else {
-                                        showToast(requireContext(), "Password is incorrect")
-                                    }
+                if (inputPassword.text.length > 7) {
+                    val waitView = waitAnimation(requireContext())
+                    val encEmail = encodeEmail(inputEmail.text.toString())
+                    val userRef = fireDatabase.getReference("users")
+                        .child(encEmail.trim())
+                    userRef.get().addOnSuccessListener { dataSnapshot ->
+                        if (dataSnapshot.exists()) {
+                            val userF = dataSnapshot.getValue<User>()
+                            if (userF != null) {
+                                if (userF.validatePassword(
+                                        inputPassword.text.toString().trim()
+                                    )
+                                ) {
+                                    dbHelper.updateUser(
+                                        userF
+                                    )
+                                    fragmentReloadListener?.onFragment(
+                                        ProfileUserFragment(),
+                                        true
+                                    )
+                                    waitView.dismiss()
+                                } else {
+                                    waitView.dismiss()
+                                    showToast(requireContext(), "Password is incorrect")
                                 }
-                            } else {
-                                showToast(
-                                    requireContext(),
-                                    "User with this login was not found, check"
-                                )
                             }
+                        } else {
+                            showToast(
+                                requireContext(),
+                                "User with this login was not found, check"
+                            )
                         }
-                    } else {
-                        showToast(
-                            requireContext(),
-                            "The password must contain at least 8 characters"
-                        )
                     }
                 } else {
-                    showToast(requireContext(), "The username field cannot be empty")
+                    showToast(
+                        requireContext(),
+                        "The password must contain at least 8 characters"
+                    )
                 }
             } else {
                 isLogUp = false
@@ -363,31 +380,36 @@ class AuthFragment : Fragment() {
         return code.toString()
     }
 
-    private fun checkAvailableLogin(login: String, onCheckComplete: (Boolean) -> Unit) {
-        val usersRef = fireDatabase.getReference("users").child(login)
+    private fun checkAvailableLogin(login: String, onCheckComplete: (Pair<Boolean,Boolean>) -> Unit) {
+        val usersRef = fireDatabase.getReference("users").orderByChild("username").equalTo(login)
 
         usersRef.get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val dataSnapshot = task.result
+                Handler(Looper.getMainLooper()).post {
+
+                    showToast(requireContext(), "${dataSnapshot}")
+                }
                 if (dataSnapshot.exists()) {
                     // Логін вже існує
-                    onCheckComplete(false)
+                    onCheckComplete(Pair(false,false))
                 } else {
                     // Логін не існує
-                    onCheckComplete(true)
+                    onCheckComplete(Pair(true,false))
                 }
             } else {
                 // Обробка помилки при спробі доступу до бази даних
                 Log.e("Firebase", "Error checking login availability", task.exception)
-                onCheckComplete(false)
+                onCheckComplete(Pair(false,true))
             }
         }
     }
 
     private fun checkAvailableEmail(email: String, onCheckComplete: (Boolean) -> Unit) {
         val usersRef = fireDatabase.getReference("users")
+        val encodeEmail = encodeEmail(email)
 
-        usersRef.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(object :
+        usersRef.child(encodeEmail).addListenerForSingleValueEvent(object :
             ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {

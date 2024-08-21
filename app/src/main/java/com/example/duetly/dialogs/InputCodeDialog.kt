@@ -133,9 +133,9 @@ class InputCodeDialog(name:String,email:String,password:String,code:String) : Di
                         if (inpCodes == 6) {
                             val encEmail = encodeEmail(emailUser)
                             val newUser = User(
-                                nameUser,
-                                encEmail,
-                                passwordUser
+                                username = nameUser,
+                                email = encEmail,
+                                password = passwordUser
                             )
                             var reqCode = ""
                             for (i in listInputs) {
